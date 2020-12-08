@@ -1,20 +1,24 @@
-const tr = require('tor-request');
-const tor_axios = require('tor-axios');
-tr.request('https://api.ipify.org', function (err, res, body) {
-  if(err){
-    console.error(err)
-  }
-  if (res.statusCode == 200) {
-    console.info("Tor Request : Your public (through Tor) IP is: " + body);
-  }
+const tr = require("tor-request");
+tr.TorControlPort.password = "TEST";
+
+const main = async () => {
+  const body = await request;
+  console.info("ip1 ", body);
+  tr.newTorSession((err) => {
+    request.then((body) => {
+      console.info("ip3 ", body);
+    });
+  });
+  const bod2y = await request;
+  console.info("ip2 ", bod2y);
+};
+const options = { url: "https://api.ipify.org", headers: { "user-agent": "giraffe" } };
+const request = new Promise((resolve, reject) => {
+  tr.request(options, function (err, res, body) {
+    if (err) reject(err);
+    if (res.statusCode === 200) {
+      resolve(body);
+    }
+  });
 });
-
-const tor = tor_axios.torSetup({
-    ip: 'localhost',
-    port: 9050,
-})
- 
-tor.get('http://api.ipify.org').then((res)=>{
-  console.info("Tor Axios : Your public (through Tor) IP is: " + res.data);
-})
-
+main();
